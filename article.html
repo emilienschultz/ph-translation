@@ -71,6 +71,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -100,6 +129,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="TODO">
+<p>Enlever les <strong>gras</strong> quand c’est pas nécessaire</p>
+</div>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <section id="objectifs-de-la-leçon" class="level2">
@@ -112,9 +144,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="quest-ce-que-plotly" class="level2">
 <h2 class="anchored" data-anchor-id="quest-ce-que-plotly">Qu’est ce que Plotly ?</h2>
-<p><strong>Plotly</strong> est une société qui fournit un certain nombre de bibliothèques <em>open source</em> permettant aux utilisateurs de construire des visualisations interactives. Celles réalisées avec Plotly se démarquent des images statiques de par leur interactivité, à l’aide de boutons, d’outils pour se déplacer et zoomer, de représentations en mosaïque et bien plus encore. Les bibliothèques Plotly sont disponibles à la fois en Python - le sujet de cette leçon - ainsi que dans d’autres languages de programmation comme R et Julia. Les librairies de Plotly permettent de réaliser une large variété de visualisations et ce à de nombreuses fins : statistiques, scientifiques, financières ou géographiques. Ces visualisations peuvent être affichées de plusieurs manières : à travers des <em>notebooks Jupyter</em>, des pages web (HTML) ou dans des applications web développées avec l’environnement <strong>Dash</strong> de Plotly. Il est aussi possible d’exporter les visualisations sous formes d’images statiques (non interactives) en pixels (<em>raster</em>) ou en vectoriel ou vectorielles.</p>
+<p><strong>Plotly</strong> est une société qui fournit un certain nombre de bibliothèques <em>open source</em> permettant aux utilisateurs de construire des visualisations interactives. Celles réalisées avec Plotly se démarquent des images statiques de par leur interactivité, à l’aide de boutons, d’outils pour se déplacer et zoomer, de visualiation en mosaïque et bien plus encore. Les bibliothèques Plotly sont disponibles à la fois en Python - le sujet de cette leçon - ainsi que dans d’autres languages de programmation comme R et Julia. Les librairies de Plotly permettent de réaliser une large variété de visualisations et ce à de nombreuses fins : statistiques, scientifiques, financières ou géographiques. Ces visualisations peuvent être affichées de plusieurs manières : à travers des <em>notebooks Jupyter</em>, des pages web (HTML) ou dans des applications web développées avec l’environnement <strong>Dash</strong> de Plotly. Il est aussi possible d’exporter les visualisations sous formes d’images statiques (non interactives) en pixels (<em>raster</em>) ou en vectoriel ou vectorielles.</p>
 <blockquote class="blockquote">
-<p>Tout le long de cette leçon, les graphes générés à l’aide de Plotly seront affichés comme des images statiques. Pour utiliser les fonctionnalités intéractivesm il faudra cliquer sur l’image ou bien le lien dans la descritption de l’image.</p>
+<p>Tout le long de cette leçon, les visualisations générées à l’aide de Plotly seront affichés comme des images statiques. Pour utiliser les fonctionnalités intéractivesm il faudra cliquer sur l’image ou bien le lien dans la descritption de l’image.</p>
 </blockquote>
 </section>
 <section id="plotly-une-librairie-graphique-de-python-plotly-express-vs-plotly-graph-objects-vs-plotly-dash" class="level2">
@@ -122,8 +154,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Afin de comprendre comment utiliser Plotly, il est fondamental de comprendre les différences entre Plotly Express, Plotly Graph Objects et Plotly Dash.</p>
 <p>Il s’agit essentiellement de 3 modules distincts - dont les fonctionnalités peuvent se superposer - qui ont leurs propres objectifs :</p>
 <ul>
-<li><p><strong>Plotly Express</strong> (<code>plotly.express</code> souvent importé avec l’alias <code>px</code>) est une interface de représentation graphique de haut niveau, facile à prendre en main, et qui permet de créer près de 30 différents types de graphes. Le module fournit des fonctions permettant de créer des graphes avec une seule ligne de code (bien que plusieurs lignes de code sont nécessaires à la personnalisation de certains éléments), rendant les graphes rapides et faciles à créer. Puisque <code>plotly.px</code> est une interface “de haut niveau”, cela signifie que l’utilisateur.ice n’a pas besoin de s’attarder sur la structure sous-jacente des graphes. Plotly recommende aux débutant.e.s de commencer avec Express avant de travailler avec Plotly Graph Objects.</p></li>
-<li><p>Les objets graphiques de Plotly - associés aux module <strong>Plotly Graph Objects</strong> (<code>plotly.graph_objects</code> souvent importé avec l’alias <code>go</code>) sont les véritables objets que Plotly créé lorsque l’on fait appel à Plotly Express. Plotly génère des Graph Objects pour garder en mémoire les données du graphe. Ces données incluent les informations à visualiser avec de nombreux autres attributs telles que les couleurs, formes et tailles des objets. Il est alors possible de créer une visualisation plus finement en avec Plotly Graph Objects. Il est d’ailleurs possible de recréer n’importe quelle figure créée par Plotly Express à l’aide de Plotly Graph Objects. Il est, en général, recommendé d’utiliser Plotly Express là ou c’est possible pour réduire le nombre de lignes de code. En revanche, comme nous le verrons par la suite, le recours seul à Plotly Express est impossible et il faudra nécessairement passer par Plotly Graph Objects.</p></li>
+<li><p><strong>Plotly Express</strong> (<code>plotly.express</code> souvent importé avec l’alias <code>px</code>) est une interface de représentation graphique de haut niveau, facile à prendre en main, et qui permet de créer près de 30 différents types de représentations. Le module fournit des fonctions permettant de créer des visualisations avec une seule ligne de code (bien que plusieurs lignes de code sont nécessaires à la personnalisation de certains éléments), rendant les visualisations rapides et faciles à créer. Puisque <code>plotly.px</code> est une interface “de haut niveau”, cela signifie que l’utilisateur.ice n’a pas besoin de s’attarder sur la structure sous-jacente des visualisations Plotly recommende aux débutant.e.s de commencer avec Express avant de travailler avec Plotly Graph Objects.</p></li>
+<li><p>Les objets graphiques de Plotly - associés aux module <strong>Plotly Graph Objects</strong> (<code>plotly.graph_objects</code> souvent importé avec l’alias <code>go</code>) sont les véritables objets que Plotly créé lorsque l’on fait appel à Plotly Express. Plotly génère des Graph Objects pour garder en mémoire les données de la visualisation. Ces données incluent les informations à visualiser avec de nombreux autres attributs telles que les couleurs, formes et tailles des objets. Il est alors possible de créer une visualisation plus finement en avec Plotly Graph Objects. Il est d’ailleurs possible de recréer n’importe quelle figure créée par Plotly Express à l’aide de Plotly Graph Objects. Il est, en général, recommendé d’utiliser Plotly Express là ou c’est possible pour réduire le nombre de lignes de code. En revanche, comme nous le verrons par la suite, le recours seul à Plotly Express est impossible et il faudra nécessairement passer par Plotly Graph Objects.</p></li>
 <li><p>Le module <strong>Plotly Dash</strong> (importé avec l’alias <code>dash</code>) est un environnement pour créer des applications web interactives (typiquement des dashboard) qui peuvent être incrustées dans des sites web et autres plateformes. On utilise ajoute souvent des figures créées avec <code>plotly.px</code> <code>plotly.go</code> dans les applications Dash, faisant des modules de Plotly la boîte à outils parfaite pour créer, manipuler et publier des représentations graphiques interactives de nos données. Plotly Dash est construit sur <code>React.js</code> et <code>Plotly.js</code> afin de rendre possible l’intégration sur internet, cela signifie que les utilisateur.ice.s n’ont pas besoin de connaissances en Javascript, CSS ou HTML (seulement en Python).</p></li>
 </ul>
 <p>Plotly fournit une documentation complète pour travailler avec <strong>Express</strong> et <strong>Graph Objects</strong> ainsi que pour utiliser <strong>Dash</strong>.</p>
@@ -133,9 +165,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Il existe actuellement une pléthore de librairies graphique disponibles sous python comme <strong>Matplotlib</strong>, <strong>Seaborn</strong>, <strong>Bokeh</strong> ou <strong>Pygal</strong>. Avec autant de possibilités, il est nécessaire de choisir une librairie plutôt qu’une autre. Des critères de choix peuvent être utiles pour décider tels que le cas d’utilisation, les goûts esthétiques ou la facilité d’utilisation avec chaque librairie présentant des avantages. Les avantages principaux de Plotly sont :</p>
 <ul>
 <li><p>Plotly est l’un des seul package qui est spécifiquement tourné vers les représentations interactive. <strong>Matplotlib</strong> et <strong>Pygal</strong> ne fournissent que très peu de fonctionnalités interactives. <strong>Bokeh</strong> est aussi prévu pour l’interactivité et se place comme une alternatives viable.</p></li>
-<li><p>Plotly est la seule suite graphique de python qui assure à la fois une création de graphe et une intégration dans des pages web simple.</p></li>
+<li><p>Plotly est la seule suite graphique de python qui assure à la fois une création de visualisations et une intégration dans des pages web simple.</p></li>
 <li><p>Plotly intègre parfaitement les objets de pandas (par exemple, on peut directement passer des <code>pandas.Dataframe</code> aux objets graphiques de Plotly)</p></li>
-<li><p>Des graphes 3D interactifs sont disponibles (ce qui n’est pas le cas des autres librairies)</p></li>
+<li><p>Des visualisations 3D interactifs sont disponibles (ce qui n’est pas le cas des autres librairies)</p></li>
 <li><p>Plotly est simple d’utilisation, les animations et les menus déroulants sont relativement simples à utiliser</p></li>
 </ul>
 </section>
@@ -145,10 +177,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="NoteAuxEvaluateurices">
 <p>Les données sont modifiées par rapport à la leçon originale pour s’adapter au contexte francophone.</p>
 </div>
-<p>Le jeu de données utilisé pour cette leçon est issu de l’article “La Part Du Genre. Genre Et Approche Intersectionnelle Dans Les Sciences Sociales Françaises Au Xxie Siècle”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Celui-ci étudie la part des articles portant sur différentes thématiques, notamment le concept de genre, dans les publications scientifiques de sciences sociales françaises sur les vingts dernières années. Les données de l’enquête ont été rendues publiques dans une démarche de science ouverte, et sont disponibles <a href="https://google.com">ici</a>. La leçon se concentre plus spécifiquement sur la proportion d’auteurs et d’autrices dans les articles et … <!-- TODO Compléter --></p>
+<p>Le jeu de données utilisé pour cette leçon est issu de l’article “La Part Du Genre. Genre Et Approche Intersectionnelle Dans Les Sciences Sociales Françaises Au Xxie Siècle”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Celui-ci étudie la part des articles portant sur différentes thématiques, notamment le concept de genre, dans les publications scientifiques de sciences sociales françaises sur les vingts dernières années. Les données de l’enquête ont été rendues publiques dans une démarche de science ouverte, et sont disponibles <a href="https://google.com">ici</a>. La leçon se concentre plus spécifiquement sur la proportion d’auteurs et d’autrices dans les articles et …</p>
+<div class="TODO">
+<p>Compléter</p>
+</div>
 </section>
-<section id="construire-des-graphes-avec-plotly-express" class="level1">
-<h1>Construire des graphes avec Plotly Express</h1>
+<section id="construire-des-visualisations-avec-plotly-express" class="level1">
+<h1>Construire des visualisations avec Plotly Express</h1>
 <section id="configurer-plotly-express" class="level2">
 <h2 class="anchored" data-anchor-id="configurer-plotly-express">Configurer Plotly Express</h2>
 <ol type="1">
@@ -161,7 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Maintenant que ces packages sont installés, créez un nouveau Jupyter notebook (ou un nouveau fichier python dans votre IDE). Idéalement, placez votre jeu de donnée et votre fichier python / notebook dans le même dossier.</li>
 <li>Importez les modules à l’aide de la commande <code>import</code> au début de votre fichier :</li>
 </ol>
-<div id="8f8a3327" class="cell" data-execution_count="1">
+<div id="1c8ccf17" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> numpy</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -175,7 +210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Remplacer les données numériques qui pourraient manquer par des <code>np.nan</code> (objet Numpy <em>Not a Number</em>)</p></li>
 <li><p>Renommer et retirer certaines données pour plus de claireté et de précision</p></li>
 </ul>
-<div id="c597e86a" class="cell" data-execution_count="3">
+<div id="73bc878f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>colonnes : <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"annee_publication"</span>, <span class="st">"revue"</span>, <span class="st">"pourcentage_femme"</span>, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"inclusif"</span>, <span class="st">"genre"</span>, <span class="st">"classe"</span>, <span class="st">"discipline"</span></span>
@@ -220,8 +255,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="diagrammes-en-barres" class="level2">
 <h2 class="anchored" data-anchor-id="diagrammes-en-barres">Diagrammes en barres</h2>
-<p>Maintenant que nous avons créé un dataframe pandas de notre jeu de donnée, nous pouvons commencer à créer quelques graphes simples en utilisant <strong>Plotly Express</strong>. Commençons par créer un diagramme en barres pour représenter le nombre d’articles publiés dans chaque discipline. Puisque notre jeu de données ne contient pas le nombre d’article (pour le moment, chaque ligne correspond à un article) nous allons d’abord créer un nouveau <code>DataFrame</code> qui regroupera les articles écrits pour chaque discipline puis évaluer le nombre d’entrées dans chaque tableau.</p>
-<div id="ca6c5277" class="cell" data-execution_count="4">
+<p>Maintenant que nous avons créé un dataframe pandas de notre jeu de donnée, nous pouvons commencer à créer quelques visualisations simples en utilisant <strong>Plotly Express</strong>. Commençons par créer un diagramme en barres pour représenter le nombre d’articles publiés dans chaque discipline. Puisque notre jeu de données ne contient pas le nombre d’article (pour le moment, chaque ligne correspond à un article) nous allons d’abord créer un nouveau <code>DataFrame</code> qui regroupera les articles écrits pour chaque discipline puis évaluer le nombre d’entrées dans chaque tableau.</p>
+<div id="6878b9b8" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Création d'un nouveau dataframe</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>articles_par_discipline : pd.Series <span class="op">=</span> df.<span class="op">\</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                groupby([<span class="st">"discipline"</span>], as_index <span class="op">=</span> <span class="va">False</span>).<span class="op">\</span></span>
@@ -266,8 +301,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>il suffit alors de créer un histogramme en utilisant ce nouveau <code>DataFrame</code>. remarquons que ce graphe est sauvegardé sous la variable <code>fig</code>, qui est une convention lorsqu’on travaille avec plotly :</p>
-<div id="74a7b240" class="cell" data-execution_count="5">
+<p>il suffit alors de créer un histogramme en utilisant ce nouveau <code>DataFrame</code>. remarquons que cette visualisation est sauvegardé sous la variable <code>fig</code>, qui est une convention lorsqu’on travaille avec plotly :</p>
+<div id="19c24a37" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Créé le diagramme bâton (bar chart) en utilisant la fonction .bar()</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.bar(articles_par_discipline, x <span class="op">=</span> <span class="st">"discipline"</span>, y <span class="op">=</span> <span class="st">"size"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -276,12 +311,311 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/statique/fig_1.png" class="img-fluid figure-img"></p>
+<p><a href="https://google.com"><img src="images/statique/fig_1.png" class="img-fluid figure-img" alt="Figure 1. Un diagramme en barres avec une intéractivité simple en utilisant Plotly Express. Si les lecteur.ice.s survolent les barres, on peut y voir apparaître des boîtes flottantes."></a></p>
 <figcaption><strong>Figure 1.</strong> Un diagramme en barres avec une intéractivité simple en utilisant <strong>Plotly Express</strong>. Si les lecteur.ice.s survolent les barres, on peut y voir apparaître des boîtes flottantes.</figcaption>
 </figure>
 </div>
-<p>Vous venez de créer votre premier graphe! Remarquons que ce graphe est déjà en partie interactif : en passant la souris sur chaque barre, la figure nous spécifie combien d’articles sont représentés et la discipline des articles. Une autre fonctionnalité notable est que l’utilisateur.ice peut sauvegarder le graphe comme un <code>.png</code> (comme image statique) cliquant sur l’icône <em>appareil photo</em> qui apparaît lorsque la souris se trouve dans le coin haut droit de l’image. Au même endroit on peut trouver des fonctions de zoom, defilement, changement d’échelle et réinitialiser la vue du graphe. Toutes ces fonctionnalités seront disponible pour toutes les visualisations qui suivent.</p>
-<p>En revanche, le graphe n’est pas des plus sympathiques, il manque de couleurs, d’un titre et de titres d’axes plus visibles. Il est possible de préciser ces informations dès le début, en donnant plus d’arguments à la fonction <code>.bar()</code>. Par exemple, grâce à l’argument <code>labels</code> nous pouvons changer le nom des axes et grâce à l’argument <code>color</code> on peut changer la couleur des barres selon une variable de notre jeu de donnée (ici nous utiliserons “Nombres d’articles” pour l’axe vertical). Pour ajouter un titre, il suffit d’utiliser l’argument <code>title</code>.</p>
+<div class="TODO">
+<p>Link to real https</p>
+</div>
+<p>Vous venez de créer votre première visualisation! Remarquons que cette visualisation est déjà en partie interactive : en passant la souris sur chaque barre, la figure nous spécifie combien d’articles sont représentés et la discipline des articles. Une autre fonctionnalité notable est que l’utilisateur.ice peut sauvegarder la visualisation comme un <code>.png</code> (comme image statique) cliquant sur l’icône <em>appareil photo</em> qui apparaît lorsque la souris se trouve dans le coin haut droit de l’image. Au même endroit on peut trouver des fonctions de zoom, defilement, changement d’échelle et réinitialiser la vue. Toutes ces fonctionnalités seront disponible pour toutes les visualisations qui suivent.</p>
+<p>En revanche, la visualisation n’est pas des plus sympathiques, il manque de couleurs, d’un titre et de titres d’axes plus visibles. Il est possible de préciser ces informations dès le début, en donnant plus d’arguments à la fonction <code>.bar()</code>. Par exemple, grâce à l’argument <code>labels</code> nous pouvons changer le nom des axes et grâce à l’argument <code>color</code> on peut changer la couleur des barres selon une variable de notre jeu de donnée (ici nous utiliserons “Nombres d’articles” pour l’axe vertical). Pour ajouter un titre, il suffit d’utiliser l’argument <code>title</code>.</p>
+<div id="779eafee" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Créé un bar chart en utilisant la fonction .bar()</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.bar(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    articles_par_discipline,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"discipline"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"size"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Titre de votre choix"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>{<span class="st">"size"</span>: <span class="st">"Nombres d'articles"</span>},</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Notez que l'argument "color" prend une chaine de caractères se referant à </span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># la colonne "maj_feminine" du jeu de donnée</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"discipline"</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://google.com"><img src="images/statique/fig_2.png" class="img-fluid figure-img" alt="Figure 2. Un diagramme bâton avec une intéractivité simple en utilisant Plotly Express. Cette visualisation est une variante de la Figure 1 avec cette fois ci des couleurs et une légende interactive qui permet aux lecteur.ice.s d’isoler ou bien de retirer des données."></a></p>
+<figcaption><strong>Figure 2.</strong> Un diagramme bâton avec une intéractivité simple en utilisant <strong>Plotly Express</strong>. Cette visualisation est une variante de la <strong>Figure 1</strong> avec cette fois ci des couleurs et une légende interactive qui permet aux lecteur.ice.s d’isoler ou bien de retirer des données.</figcaption>
+</figure>
+</div>
+<div class="TODO">
+<p>Link to real https</p>
+</div>
+<p>Comme montré ci dessus, <strong>Plotly</strong> ajoute automatiquement une légende à la visualisation si vous distinguez les objets par des couleurs (à savoir que la légende peut être retirée). La légende est elle aussi interactive : en cliquant une fois sur un élément, la barre correspondante disparait de la visualisation; en double-cliquant sur un élément, cette fois ci tous les autres objets disparaissent excepté celui que vous avez sélectionné.</p>
+</section>
+<section id="courbes" class="level2">
+<h2 class="anchored" data-anchor-id="courbes">Courbes</h2>
+<p>Tâchons maintenant de créer une courbe (<em>line chart</em>). De manière générale, la syntaxe pour créer une visualisation avec <strong>Plotly Express</strong> est toujours <code>px.type_de_representation()</code> où <code>type_de_representation</code> représente le type de représentation que l’on souhaite créer. Comme on a utilisé <code>px.bar()</code> pour créer un diagramme en barres (<em>bar chart</em>), ici nous utiliserons <code>px.line()</code> pour créer un <em>line chart</em>. Tous les types de représentations disponibles et les fonctions associées peuvent être trouvées dans la <a href="https://perma.cc/U4N7-2VM5">documentation Plotly</a>.</p>
+<p>Notre courbe représentera l’évolution du nombre d’articles par discipline à travers les années. Comme précédemment, nous créons un nouveau <code>DataFrame</code> qui regroupera les articles par année, par le critère <code>discipline</code>:</p>
+<div id="37556960" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Créé un nouveau DataFrame contenant le nombre de d'articles écrits par une majorité de femmes par année</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>evolution_nbe_articles_par_annee <span class="op">=</span> df.<span class="op">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    groupby([<span class="st">"discipline"</span>, <span class="st">"annee_publication"</span>], as_index<span class="op">=</span><span class="va">False</span>).<span class="op">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    size()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ensuite, nous créons plusieurs courbes en utilisant la fonction <code>.line()</code> et utilisons les mêmes paramètres que précédement à savoir : <code>label</code> et <code>color</code>. Ici encore il est possible d’ajouter un titre à notre figure, il suffit de retirer le <code>#</code> devait l’argument <code>title</code> dans l’exemple suivant (et tous ceux qui suivent) :</p>
+<div id="dee62f6d" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Créé des courbes avec la fonction px.line() et ajoute quelques customisations</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    evolution_nbe_articles_par_annee,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="st">"annee_publication"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> <span class="st">"size"</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># title = "Ajouter le titre de votre choix",</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> {<span class="st">"size"</span> : <span class="st">"Nombre d'articles publiés"</span>},</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> <span class="st">"discipline"</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://google.com"><img src="images/statique/fig_3.png" class="img-fluid figure-img" alt="Figure 3. Courbe avec une intéractivité simple en utilisant Plotly Express. Survoler les lignes révèle ne boîte flottante."></a></p>
+<figcaption><strong>Figure 3.</strong> Courbe avec une intéractivité simple en utilisant <strong>Plotly Express</strong>. Survoler les lignes révèle ne boîte flottante.</figcaption>
+</figure>
+</div>
+<div class="TODO">
+<p>Link to real https</p>
+</div>
+<p>Nous avons appris à créer de nouvelles visualisations et de les personnaliser - mais comment faire pour personnaliser notre figure après l’avoir créer ? À la place nous pouvons utiliser la fonction <code>.update_layout()</code> sur notre <code>fig</code> pour éditer après coup. Cette fonction peut être appliquée à n’importe quelle figure générée avec <strong>Plotly Express</strong> afin de modifier un large panel de paramètres. Prenons comme exemple la fonction générée précédemment et modifions la police, la couleur et la taille de notre titre :</p>
+<div id="0baf4db4" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig.update_layout(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    font_family <span class="op">=</span> <span class="st">"Courrier New"</span>,   <span class="co"># Modification de la police</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    font_color <span class="op">=</span> <span class="st">"blue"</span>,            <span class="co"># Modification de la couleur du texte</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    legend_title_font_color <span class="op">=</span> <span class="st">"red"</span>,<span class="co"># Modification de la couleur du titre de la légende</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    title <span class="op">=</span> <span class="st">"Un titre formatté"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://google.com"><img src="images/statique/fig_4.png" class="img-fluid figure-img" alt="Figure 4. Courbe avec une intéractivité simple en utilisant Plotly Express. Survoler les lignes révèle ne boîte flottante. Cette visualisation est une variante de la Figure 3 avec des polices d’écriture, couleurs et titre différent."></a></p>
+<figcaption><strong>Figure 4.</strong> Courbe avec une intéractivité simple en utilisant Plotly Express. Survoler les lignes révèle ne boîte flottante. Cette visualisation est une variante de la Figure 3 avec des polices d’écriture, couleurs et titre différent.</figcaption>
+</figure>
+</div>
+<div class="TODO">
+<p>Link to real https</p>
+</div>
+</section>
+<section id="nuages-de-points" class="level2">
+<h2 class="anchored" data-anchor-id="nuages-de-points">Nuages de points</h2>
+<p>Les nuages de points (<em>scatterplots</em>), généralement utilisés pour visualiser des relations entre 2 variables continues, peuvent être générés à l’aide de <strong>Plotly Express</strong> en utilisant la fonction <code>scatter()</code>. Pour notre jeu de donnée, il peut être intéressant d’utiliser un nuage de points pour montrer la relation entre la proportion d’articles de revue qui parlent de genre et la proportion d’articles de la revue qui mentionnent la classe par discipline.</p>
+<p>Il nous faut créer un nouveau <code>DataFrame</code> :</p>
+<div id="cd68ac5a" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>proportion_genre_classe <span class="op">=</span> df.groupby([<span class="st">"revue"</span>,<span class="st">"discipline"</span>], as_index<span class="op">=</span><span class="va">False</span>)[[<span class="st">"genre"</span>,<span class="st">"classe"</span>]].<span class="op">\</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    agg(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        proportion_genre <span class="op">=</span> (<span class="st">"genre"</span>, <span class="kw">lambda</span> x : <span class="dv">100</span> <span class="op">*</span> x.mean()),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        proportion_classe <span class="op">=</span> (<span class="st">"classe"</span>, <span class="kw">lambda</span> x : <span class="dv">100</span> <span class="op">*</span> x.mean()),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="f74f1941" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.scatter(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    proportion_genre_classe,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"proportion_classe"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"proportion_genre"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"discipline"</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># title="Titre de votre choix",</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://google.com"><img src="images/statique/fig_5.png" class="img-fluid figure-img" alt="Figure 5. Nuage de points avec une intéractivité simple. Survoler un point du jeu de donnée permet d’afficher la discipline ainsi que la proportion d’articles mentionnant le genre, puis la classe pour une revue (non affichée) donnée. De plus, la légende intéractive permet d’isoler, comparer, retirer des catégories de points."></a></p>
+<figcaption><strong>Figure 5.</strong> Nuage de points avec une intéractivité simple. Survoler un point du jeu de donnée permet d’afficher la discipline ainsi que la proportion d’articles mentionnant le genre, puis la classe pour une revue (non affichée) donnée. De plus, la légende intéractive permet d’isoler, comparer, retirer des catégories de points.</figcaption>
+</figure>
+</div>
+<div class="TODO">
+<p>Link to real https</p>
+</div>
+<p>Comme vous pouvez le voir, les nuages de points contiennent aussi certaines intéractions par défaut : survoler les points permet d’afficher les données spécifique de proportions d’articles mentionnant le genre ou la classe. Cliquer ou double cliquer sur le nom des disciplines dans la légende permet d’isoler certains éléments.</p>
+</section>
+</section>
+<section id="créer-une-visualisation-en-mosaïque" class="level1">
+<h1>Créer une visualisation en mosaïque</h1>
+<p>Pour créer une visualisation en mosaïque (<em>facet plots</em>) qui partagent certains axes et permettent de montrer des sous ensembles de notre jeu de donnée. Plotly rend la création de telles visualisations très simple. En reprenant les exemples précédents, il suffit de spécifier le type de représentation que vous souhaitez dans les sous-figures. En deuxième instance il suffit d’utiliser le paramètre <code>facet_col</code> qui permet de préciser quel variable utiliser pour distinguer les sous-figures. Dans l’exemple ci dessous, on créé une grille de 2x1 pour montrer la part d’articles qui mentionnent le genre en fonction de la discipline et si cela a été écrit par une majorité de femmes ou une majorité d’hommes :</p>
+<div id="38335bdc" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>proportion_par_discipline_maj_feminine <span class="op">=</span> df.<span class="op">\</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    groupby([<span class="st">"maj_feminine"</span>,<span class="st">"discipline"</span>], as_index<span class="op">=</span><span class="va">False</span>)[[<span class="st">"genre"</span>]].<span class="op">\</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    agg(proportion_genre <span class="op">=</span> (<span class="st">"genre"</span>, <span class="kw">lambda</span> x : <span class="dv">100</span> <span class="op">*</span> x.mean()))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Use px.bar() to indicate that we want to create bar charts</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.bar(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    proportion_par_discipline_maj_feminine,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"discipline"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"proportion_genre"</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    facet_col<span class="op">=</span><span class="st">"maj_feminine"</span>,  <span class="co"># Use facet_col parameter to specify which field to split graph by</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"discipline"</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># title="Add a title here",</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://google.com"><img src="images/statique/fig_6.png" class="img-fluid figure-img" alt="Figure 6. Une mosaïque de 2 diagrammes en barres avec une intéractivité simple créée avec Plotly Express en distinguant les articles écrits par une majorité de femmes et ceux écrits par une majorité d’hommes. La légende intéractive permet aussi d’isoler, comparer ou retirer certaines disciplines."></a></p>
+<figcaption><strong>Figure 6.</strong> Une mosaïque de 2 diagrammes en barres avec une intéractivité simple créée avec <strong>Plotly Express</strong> en distinguant les articles écrits par une majorité de femmes et ceux écrits par une majorité d’hommes. La légende intéractive permet aussi d’isoler, comparer ou retirer certaines disciplines.</figcaption>
+</figure>
+</div>
+<div class="TODO">
+<p>Link to real https</p>
+</div>
+<p>Notez que cette méthode ne nécessite pas de spécifier les dimensions de la grille puisque <strong>Plotly Express</strong> divise automatiquement la figure par le nombre de catégories disponibles (ici 2 puisque les 2 catégories disponibles sont majorité masculine / féminine). Cependant cette méthode ne peut fonctionner uniquement pour des figures ne représentant qu’un seul type de représentation (ici diagrammes en barres). Nous discutons plus bas de la manière des figures contenant des sous figures de dimensions particlulières en utilisant <strong>Graph Objects</strong>.</p>
+<section id="ajouter-des-animations-évolution-temporelle" class="level2">
+<h2 class="anchored" data-anchor-id="ajouter-des-animations-évolution-temporelle">Ajouter des animations : évolution temporelle</h2>
+<p>Comme nous l’avons vu, <strong>Plotly Express</strong> contient des fonctionnalités intéractives native. Et pourtant, il y a encore de nombreuses fonctionnalités qui peuvent être implémentées pour augmenter l’intéractivité comme les animations à travers les <em>animation frames</em>.</p>
+<p>Une <em>animation frame</em> représente la manière dont les données changent en fonction d’un certain axe. Dans les recherches historiques, la mesure la plus utile est l’axe temporel bien que d’autres variables numérique avec une relation d’ordre (ex : les entiers, ou un intervalle comme <span class="math inline">\([0,1]\)</span>) peut fonctionner. Une figure <strong>Plotly Express</strong> avec une animation contient une barre de défilement intéractive permettant de jouer/arrêter l’animation mais aussi de se déplacer manuellement dans les données.</p>
+<p>Pour créer une visualisation avec une animation, il faut commencer par sélectionner le type de représentation que nous voulons utiliser comme dans les exemples précédents. Puis, à l’intérieur de la fonction on utilise le paramètre <code>animation_frame</code> pour spécifier quel variable doit petre utilisée pour visualiser l’évolution. Dans notre exemple, nous reprenons le nombre d’articles mentionnant le genre et affichons l’évolution à travers les années</p>
+<div id="dbce3209" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>proportion_genre_animation <span class="op">=</span> df.groupby([<span class="st">"annee_publication"</span>,<span class="st">"discipline"</span>],</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                                as_index <span class="op">=</span> <span class="va">False</span>).size()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># On utilise px.bar pour créer un diagramme bâton</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.bar(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    proportion_genre_animation,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"discipline"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"size"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>{<span class="st">"size"</span>: <span class="st">"Nombre d'articles mentionnant le genre publiés"</span>},</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    range_y<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">500</span>],  <span class="co"># Le paramètre range_y permet de customiser l'intervalede l'axe y</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"discipline"</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># title="Add a title here",</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    animation_frame<span class="op">=</span><span class="st">"annee_publication"</span>, <span class="co"># Use animation_frame to specify which variable to measure for change</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://google.com"><img src="images/statique/fig_7.png" class="img-fluid figure-img" alt="Figure 7. Diagramme bâton animé associé à une barre de défilement créés grâce à Plotly Express. Comme précédemment, les lecteur.ice.s peuvent survoler les barres pour faire apparaître des boîtes flottantes. Les lecteur.ice.s peuvent appuyer sur les boutons play/pause ou utiliser la barre de défilement pour naviguer à travers les années."></a></p>
+<figcaption><strong>Figure 7.</strong> Diagramme bâton animé associé à une barre de défilement créés grâce à <strong>Plotly Express</strong>. Comme précédemment, les lecteur.ice.s peuvent survoler les barres pour faire apparaître des boîtes flottantes. Les lecteur.ice.s peuvent appuyer sur les boutons <em>play/pause</em> ou utiliser la barre de défilement pour naviguer à travers les années.</figcaption>
+</figure>
+</div>
+<div class="TODO">
+<p>Link to real https</p>
+</div>
+</section>
+<section id="ajouter-des-animations-menus-déroulants" class="level2">
+<h2 class="anchored" data-anchor-id="ajouter-des-animations-menus-déroulants">Ajouter des animations : Menus déroulants</h2>
+<p>Les menus déroulants sont légèrements plus difficiles que les <em>animation frames</em>. Ils permettent à l’utilisateur.ice de passer d’une configuration d’affichage à une autre comprenant une large variété de paramètres permettant de changer les couleurs, lignes, axes et mêmes les variables. Quand on créé une figure avec un menu déroulant, la première étape est de créer la figure initiale <em>sans menu déroulant</em> (qui correspondra à la première vue que l’utilisateur.ice verra). Dans cet exemple, nous travaillerons avec le nuage de points qui illustre la parts des articles mentionnant la classe et le genre. La construction est donc la suivante :</p>
+<div id="ab6a30a3" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.scatter(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    proportion_genre_classe,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"proportion_classe"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"proportion_genre"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"discipline"</span>, </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># title="Titre de votre choix",</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># labels = {}</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notons que la figure a été céée mais n’est pas visible puisque nous n’avons pas encore utilisé la fonction <code>fig.show()</code>. La figure sera affichée une fois que nous avons ajouté le menu dérorulant dans les prochaines étapes.</p>
+<p>Après avoir créé la vue initiale, nous pouvons utilisé la fonction <code>update_layout</code> à nouveau pour ajouter un menu déroulant.\ C’est l’étape la plus complexe puisque les données de l’objet <strong>Plotly Express</strong> sont imbriquées à plusieurs niveau <em>sous le capot</em>, donc nous avons besoin de modifier des attributs à un niveau plus profond qu’à l’habitude pour créer le menu.\</p>
+<p>Une fois qu’on a appelé la fonction <code>update_layout</code>:</p>
+<ul>
+<li><p>nous devons d’abord accéder le paramètre <code>updatemenus</code>: c’est une liste de dictionnaires, chaque dictionnaire contient les métadonnées pour plusieurs fonctionnalités.</p></li>
+<li><p>la seule fonctionnalité qui nous intéresse est le <code>dropdown box</code>, qui est contenue dans le dictionnaire <code>buttons</code>.</p></li>
+<li><p>la clef <code>boutton</code> contient comme valeur, une autre liste de dictionnaires, chaque dictionnaire représente les options disponibles dans le menu déroulant.</p></li>
+<li><p>Nous aurons besoin de créer 5 <code>buttons</code> — one pour chaque sous-groupe de données — donc notre list <code>buttons</code> contiendra 5 dictionnaires.</p></li>
+</ul>
+<div class="NoteAuxEvaluateurices">
+<p>the original article is inconsistant</p>
+</div>
+<ul>
+<li><p>chacun de ces deux dictionnaires devront contenir 3 paires clef-valeur :</p>
+<ul>
+<li><p>la première paire, avec pour clef <code>args</code> précisera le type de représentation que nous voulons afficher.</p></li>
+<li><p>la deuxième paire, avec pour clef <code>label</code> précisera le titre à afficher à côté du menu déroulant.</p></li>
+<li><p>la troisième paire, avec pour clef <code>method</code>, précisera comment modifier la figure (modifications possibles <code>update</code>, <code>restyle</code>, <code>animer</code>, etc…)</p></li>
+</ul></li>
+</ul>
+<p>Dans l’exemple ci dessous, nous regarderons comment utiliser le menu déroulant pour changer la catégorie de la variable affichée. Puisque nous travaillons avec un nuage de points qui affiche la part des journaux qui parlent de genre et de classe, nous ajouterons un menu déroulant qui permet d’afficher toutes les disciplines ensembles, puis seulement les journaux de sociologie, seulement les journaux de géographie.\ Pour créer le menu déroulant nous suivant les étapes suivantes : - à la clef <code>label</code> nous associons pour valeur, le texte à afficher dans le menu déroulant. - à la clef <code>method</code>, nous associons la valeur <code>update</code> puisque nous modifions l’affichange (<code>layout</code>) ET les données (<code>data</code>). - à la clef <code>args</code>, nous associons une autre liste de dictionnaires qui spécifiera quelle données seront <code>visible</code>(s) (vous trouverez plus d’informations à ce propos plus bas), le titre de la vue (paramètre optionnel), ainsi que les titres pour les axes x et y de cette vue (paramètre optionnel).</p>
+<p>Le paramètre <code>visible</code> contient une liste, chaque élément de cette liste indiquera si les données à cet index doit être affiché où non. Dans notre exemple, la liste doit contenir 4 éléments puisque nous avons 4 catégories à l’écran. Dans notre cas, le premier boutton doit représenter la visualisation telle qu’elle sera initiallement présentée à l’utilisateur.ice et doit donc spécifier <code>[True, True, True, True]</code> puisque nous souhaitons que toutes les disciplines soient affichées. Cependant, pour les 3 autres vues, nous devons seulement inscrire <code>True</code> pour un seul élément puisaue ous souhaitons n’afficher qu’une discipline à la fois.</p>
+<p>Passons à la pratique :</p>
+<div id="68bd5d1a" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nous utilisons la fonction .update_layout pour ajouter le menu déroulant</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>fig.update_layout(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    updatemenus <span class="op">=</span> [<span class="bu">dict</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        buttons <span class="op">=</span> [</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Création de la liste de boutson pour stocker un dictionnaire pour chaque option du menu déroulant.</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            <span class="bu">dict</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                label <span class="op">=</span> <span class="st">"Toutes les disciplines"</span>, <span class="co"># Nom pour ma première vue</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>                method <span class="op">=</span> <span class="st">"update"</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>                args <span class="op">=</span> [</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Cette vue montre les 4 disciplines</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                    {<span class="st">"visible"</span> : [<span class="va">True</span>, <span class="va">True</span>, <span class="va">True</span>, <span class="va">True</span>]},</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                    {</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"title"</span> : <span class="st">"Toutes les disciplines"</span>,</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"xaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant la classe"</span>},</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"yaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant le genre"</span>}</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                    }</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>                ]</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>            <span class="bu">dict</span>(</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>                label <span class="op">=</span> <span class="st">"Géographie"</span>, <span class="co"># Nom pour ma deuxième vue</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>                method <span class="op">=</span> <span class="st">"update"</span>,</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>                args <span class="op">=</span> [</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Cette vue montre les seulement la première discipline</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>                    {<span class="st">"visible"</span> : [<span class="va">True</span>, <span class="va">False</span>, <span class="va">False</span>, <span class="va">False</span>]}, </span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>                    {</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"title"</span> : <span class="st">"Géographie"</span>,</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"xaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant la classe"</span>},</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"yaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant le genre"</span>}</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>                    }</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>                ]</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>            <span class="bu">dict</span>(</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>                label <span class="op">=</span> <span class="st">"Sociologie"</span>, <span class="co"># Nom pour ma troisième vue</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>                method <span class="op">=</span> <span class="st">"update"</span>,</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>                args <span class="op">=</span> [</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Cette vue montre uniquement la deuxième discipline</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>                    {<span class="st">"visible"</span> : [<span class="va">False</span>, <span class="va">True</span>, <span class="va">False</span>, <span class="va">False</span>]}, </span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>                    {</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"title"</span> : <span class="st">"Sociologie"</span>,</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"xaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant la classe"</span>},</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"yaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant le genre"</span>}</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>                    }</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>                ]</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>            <span class="bu">dict</span>(</span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>                label <span class="op">=</span> <span class="st">"Économie"</span>, <span class="co"># Nom pour ma quatrième vue</span></span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>                method <span class="op">=</span> <span class="st">"update"</span>,</span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>                args <span class="op">=</span> [</span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Cette vue montre la 3è discipline</span></span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>                    {<span class="st">"visible"</span> : [<span class="va">False</span>, <span class="va">False</span>, <span class="va">True</span>, <span class="va">False</span>]},</span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>                    {</span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"title"</span> : <span class="st">"Économie"</span>,</span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"xaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant la classe"</span>},</span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"yaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant le genre"</span>}</span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>                    }</span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>                ]</span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a>            <span class="bu">dict</span>(</span>
+<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>                label <span class="op">=</span> <span class="st">"Études de Genre"</span>, <span class="co"># Nom pour ma cinquième vue</span></span>
+<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a>                method <span class="op">=</span> <span class="st">"update"</span>,</span>
+<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a>                args <span class="op">=</span> [</span>
+<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Cette vue montre la 4è discipline</span></span>
+<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a>                    {<span class="st">"visible"</span> : [<span class="va">False</span>, <span class="va">False</span>, <span class="va">False</span>, <span class="va">True</span>]},</span>
+<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a>                    {</span>
+<span id="cb14-65"><a href="#cb14-65" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"title"</span> : <span class="st">"Études de Genre"</span>,</span>
+<span id="cb14-66"><a href="#cb14-66" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"xaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant la classe"</span>},</span>
+<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"yaxis"</span> : {<span class="st">"title"</span> : <span class="st">"Part des articles mentionnant le genre"</span>}</span>
+<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a>                    }</span>
+<span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a>                ]</span>
+<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a>    )]</span>
+<span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://google.com"><img src="images/statique/fig_8.png" class="img-fluid figure-img" alt="Figure 8. Graphes à points avec un filtre intéractif sous la forme d’un menu déroulant créé grâce à Plotly Express. Cette figure contient une légende intéractive qui per;et au lecteur d’isoler, comparer et retirer des données. De plus survoler des points permet de faire apparaître des boîtes flottantes."></a></p>
+<figcaption><strong>Figure 8.</strong> Graphes à points avec un filtre intéractif sous la forme d’un menu déroulant créé grâce à <strong>Plotly Express</strong>. Cette figure contient une légende intéractive qui per;et au lecteur d’isoler, comparer et retirer des données. De plus survoler des points permet de faire apparaître des boîtes flottantes.</figcaption>
+</figure>
+</div>
+<div class="TODO">
+<p>Link to real https</p>
+</div>
 </section>
 </section>
 
