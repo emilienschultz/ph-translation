@@ -1210,3 +1210,271 @@ save_html(fig, "./images/interactif/fig_15.html")
 ::: {.TODO}
 Link to real https
 :::
+
+#### Étape 7 : Ajout d'annotations aux courbes
+
+Puisque la légende à été retirée, il est impossible de sitinguer une discipline des autres. Nous pouvons utiliser la fonction `.update_layout` pour ajouter des flèches pointant vers chaque ligne avec une annotation : 
+
+```{python}
+#| echo: true
+#| eval: false
+
+fig.update_layout(
+    # Entre comme paramètre la list de dictionnaires où chaque dictionnaire représente une annotation
+    annotations = [
+        # Notre première annotation sera pour identifier la catégorie "Études de Genre"
+        dict(
+            # coodinées du points de référence de l'annotation
+            x = 2005, y = 0.897,
+            # Spécifie fans quel référentiel on se place, ici comme on annote le graphe n°2 on donne comme référence x2, y2
+            xref = "x2", yref = "y2",
+            # Permet de spécifier la longueur de la flèche, et donc du déport du point
+            ax = 30, ay = 100,
+            text = "Études de Genre",
+            showarrow = True, # Utilisez False si vous ne voullez pas de la tête de flèche dans l'annotation
+            arrowhead = 1, # change la taille de la tête de flèche
+        ),
+        # Notre deuxième annotation sera pour identifier la catégorie "Sociologie"
+        dict(
+            x = 2007, y = 0.1514,
+            xref = "x2", yref = "y2",ax =-30, ay = -100,
+            text = "Sociologie",showarrow = True, arrowhead = 1, 
+        ),
+        # Notre troisième annotation sera pour identifier la catégorie "Géographie"
+        dict(
+            x = 2008, y = 0.04054,
+            xref = "x2", yref = "y2",ax = 30, ay = -100,
+            text = "Géographie",showarrow = True, arrowhead = 1, 
+        ),
+        # Notre deuxième annotation sera pour identifier la catégorie "Économie"
+        dict(
+            x = 2014, y = 0.083,
+            xref = "x2", yref = "y2",ax = 30, ay = -100,
+            text = "Économie",showarrow = True, arrowhead = 1, 
+        ),
+    ]
+)
+``` 
+
+```{python}
+#| echo: false
+#| eval: true
+
+fig.update_layout(
+    # Entre comme paramètre la list de dictionnaires où chaque dictionnaire représente une annotation
+    annotations = [
+        # Notre première annotation sera pour identifier la catégorie "Études de Genre"
+        dict(
+            # coodinées du points de référence de l'annotation
+            x = 2005, y = 0.897,
+            # Spécifie fans quel référentiel on se place, ici comme on annote le graphe n°2 on donne comme référence x2, y2
+            xref = "x2", yref = "y2",
+            # Permet de spécifier la longueur de la flèche, et donc du déport du point
+            ax = 30, ay = 100,
+            text = "Études de Genre",
+            showarrow = True, # Utilisez False si vous ne voullez pas de la tête de flèche dans l'annotation
+            arrowhead = 1, # change la taille de la tête de flèche
+        ),
+        # Notre deuxième annotation sera pour identifier la catégorie "Sociologie"
+        dict(
+            x = 2007, y = 0.1514,
+            xref = "x2", yref = "y2",ax =-30, ay = -100,
+            text = "Sociologie",showarrow = True, arrowhead = 1, 
+        ),
+        # Notre troisième annotation sera pour identifier la catégorie "Géographie"
+        dict(
+            x = 2008, y = 0.04054,
+            xref = "x2", yref = "y2",ax = 30, ay = -100,
+            text = "Géographie",showarrow = True, arrowhead = 1, 
+        ),
+        # Notre deuxième annotation sera pour identifier la catégorie "Économie"
+        dict(
+            x = 2014, y = 0.083,
+            xref = "x2", yref = "y2",ax = 30, ay = -100,
+            text = "Économie",showarrow = True, arrowhead = 1, 
+        ),
+    ]
+)
+
+fig.update_layout(width = 1200,height = 400)
+fig.write_image("./images/statique/fig_16.png")
+save_html(fig, "./images/interactif/fig_16.html")
+```
+
+[![**Figure 16.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 15 des annotations pour repérer les courbes du sous-graphe du milieu](images/statique/fig_16.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+### Étape 8 : Ajout d'annotations en dessous de la figure 
+
+Nous pourrions avoir besoin d'ajouter des annotations en dessous de la figure pour spécifier la direction choisie pour notre analyse (cela s'avère très utile lorsqu'on publie des articles académiques), ce qui peut être fait grâce à la fonctions `.add_annotation()`:
+
+```{python}
+#| echo: true
+#| eval: false
+
+fig.add_annotation(
+    dict(
+        font=dict(color="black", size=15),  # Change la police d'écriture
+        x=0.5,  # Utilise x et y pour la position de l'annotation
+        y=-0.25,
+        showarrow=False,
+        text=(
+            "Nombre d'articles publiés par discipline (gauche);<br>"
+            "proportion d'articles mentionnant le genre à travers les années (centre);<br>"
+            "distribution de la part de femmes autrices lorsque l'article est publié en écriture inclusive (droite)."),
+        textangle=0,  # Option pour changer l'orientation de l'écriture, utile pour la gestion de l'espace
+        xanchor="center",
+        xref="paper",  # Régler xref et yref à 'paper' pour que les valeurs de x et y soient des coordonées absolues
+        yref="paper",
+    )
+)
+```
+
+```{python}
+#| echo: false
+#| eval: true
+
+fig.add_annotation(
+    dict(
+        font=dict(color="black", size=15),  # Change la police d'écriture
+        x=0.5,  # Utilise x et y pour la position de l'annotation
+        y=-0.25,
+        showarrow=False,
+        text=(
+            "Nombre d'articles publiés par discipline (gauche);<br>"
+            "proportion d'articles mentionnant le genre à travers les années (centre);<br>"
+            "distribution de la part de femmes autrices lorsque l'article est publié en écriture inclusive (droite)."),
+        textangle=0,  # Option pour changer l'orientation de l'écriture, utile pour la gestion de l'espace
+        xanchor="center",
+        xref="paper",  # Régler xref et yref à 'paper' pour que les valeurs de x et y soient des coordonées absolues
+        yref="paper",
+    )
+)
+
+fig.update_layout(width = 1200,height = 400)
+fig.write_image("./images/statique/fig_17.png")
+save_html(fig, "./images/interactif/fig_17.html")
+```
+
+[![**Figure 17.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 16 avec des annotations supplémentaires sous les graphes.](images/statique/fig_17.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+# Visualiser et Exporter les graphes
+
+Dans les sections précédentes de la leçon, nous avons vu comment créer et modifier les visualisations intéractives avec **Plotly Express** et **Plotly Graph Objects**. Nous allons maintenant apprendre comment faire apparaître les visualisations et les exproter pour les publier ou les partager.\\
+
+La méthode illustrée ici exportera la figure 3 créée plus tôt dans la leçon :
+```{python}
+fig = px.line(
+    evolution_nbe_articles_par_annee,
+    x = "annee_publication",
+    y = "size",
+    # title = "Ajouter le titre de votre choix",
+    labels = {"size" : "Nombre d'articles publiés"},
+    color = "discipline"
+)
+```
+
+## Faire apparaître le graphe
+
+Comme nous l'avons vu tout le long de cette leçon, la fonction `.show()` peut être utilisée pour faire apparaître la figure. Par défaut, cette méthode utilise le générateur d'image **Plotly** qui fournit l'intéractivité native :
+```{python}
+#| echo: true
+#| eval: false
+
+fig.show()
+```
+
+```{python}
+#| echo: false
+#| eval: true
+
+fig.update_layout(width = 800,height = 600)
+fig.write_image("./images/statique/fig_18.png")
+save_html(fig, "./images/interactif/fig_18.html")
+```
+
+[![**Figure 18.** Reproduction de la figure 3, illustrant la fonction `fig.show()`.](images/statique/fig_18.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+## Export des graphes
+
+Les figures **Plotly** peuvent être exportées en version statique (donc sans interactivité) ou en version interactive. Les visualisations intéractives sont utiles pour les sites de recherches et certaines publications numériques, tandis que les versions statiques sont plus appropriées aux publications imprimées.
+
+### Export en HTML 
+
+Exporter les figures en HTML conserve l'interactivité lorsqu'on les ouvre avec un moteur de recherche. Toute figure peut être sauvegardée en format HTML grâce à la fonction `.write_html()` :
+
+```{python}
+#| eval: false
+#| echo: true
+# Sauvegarde du graphe en format HTML (graphe que nous avons conservé sous la variable 'fig' pendant toute la leçon)
+fig.write_html("nom_graphe.html")
+```
+
+Par défaut toute figure exportée sera sauvegardée dans le même dossier que celui où se trouve le script. Si vous voulez sauvegarder la figure dans un autre dossier, vous pouvez spécifier le chemin exact vers ce dossier (par exemple `fig.write_html("your_path/nom_graphe.html")`)
+
+### Export d'images statistiques
+
+**Plotly** fournit de nombreuses options pour exporter des images avec pixels (`.png` ou `.jpg`) et images vectorielles (`.pdf` ou `.svg`). Pour cela, il suffit d'utiliser la fonction `write_image()` et spécifier quel type d'image nous souhaitons dans le nom du fichier :
+
+```{python}
+#| echo: true
+#| eval: false
+# Export en images classiques (raster ?):
+fig.write_image("nom_graphe.png")
+fig.write_image("nom_graphe.jpeg")
+
+# Export en images vectorielles :
+fig.write_image("nom_graphe.svg")
+fig.write_image("nom_graphe.pdf")
+```
+
+# Sommaire
+
+**Plotly** offre la possibilité de créer des images de qualité, interactives en utilisant Python ou bien d'autres languages de programmation. Cette leçon fournit un apperçu de **Plotly**, pourquoi cette librairie est utile et comment on peut l'utiliser sous Python. Elle montre aussi comment utiliser différents modules de **Plotly** (**Plotly Express** et **Plotly Graph Objects**) et les méthodes nécessaires pour créer, éditer et exporter des graphes. Les syntaxes clefs sont : 
+
+- Installer **Plotly** en utilisant `pip install plotly`
+
+- Importer **Plotly Express** et **Plotly Graph Objects** à l'aide de `import plotly.express as px` et `import plotly.graph_objects as go`
+
+
+- Dans **Plotly Express**
+
+
+    - Créer des graphes à l'aide de `px.bar()`, `px.line()` et `px.scatter()`
+
+    - Ajouter des personalisations tels qu'un titre, des titres d'axes ou modifier les couleurs à l'aide des paramètres (`title`, `labels` et `color`) et même ajouter des animations avec le paramètre `animation_frames`.
+
+    - Modifier les graphes après leur création à l'aide de la fonction `.update_layout()` et ajouter des menus déroulants
+
+- Avec **Plotly Graph Objects**:
+
+    - Reconnaitre la structure sous-jacente de toutes les figures à travers les attributs `data`, `layout` et `frames`
+
+    - Créer de nouveaux graphes vides avec la fonction `go.Figure()`
+
+    - Créer des graphes avec les fonctions `go.Bar()`, `go.Box()`, `go.Line()` et des tables avec `go.Table()`
+
+    - Créer des mosaïques (en important le module `from plotly.subplots import make_subplots`, et réaliser l'implémentation grâce à la fonction `make_subplots` puis ajouter des données grâce à la fonction `.add_trace()`)
+
+    - Modifier les graphes après leur création à l'aide de la fonction `.update_layout()`
+
+- Exporter des graphes créés avec **Plotly Express** ou **Plotly Graph Objects** avec la fonction `.write_html()` ou bien `.write_image()`
+
+::: {.NoteAuxEvaluateurices}
+j'ai retiré
+
+> Ajouter des personnalisation en modifiant directement l'attribut `layout`<br>
+
+Parce que ce n'est pas dans le tuto et tout le monde utilise `.update_layout`
+:::
