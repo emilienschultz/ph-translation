@@ -7,8 +7,24 @@ format:
   html:
     css: styles.css
 ---
+
 ::: {.TODO}
 Enlever les **gras** quand c'est pas nécessaire
+
+Vérifier l'espace autour des blocs de code
+:::
+
+::: {.NoteAuxEvaluateurices}
+Il est possible de se référer aux *datavis* de plusieurs manières différentes (visualisations, figures, représentations et graphes sont les plus courants). Dans le but d'être le plus correct et rigoureux possibles nous avons fait le choix d'écarter le mot 'graphe' qui est trop flou et dont la définition mathématique s'écarte trop de ce que l'on désigne.
+Nous avons décidé d'utiliser les mots les situations suivantes :
+
+- "visualisation" : représente l'objet produit donc la représentation graphique dans son entièreté (légende, données, couleurs etc...). Il apparaît (très) souvent.
+
+- "représentation" : se réfère uniquement à la manière de représenter des données. ie on peut proposer plusieurs représentations d'une distribution : représentation en histogramme, en violon, en boîte.
+
+- "figure" : se réfère aux objets Plotly (appelés `fig` dans le code par convention) et dans les captions des images.
+
+Cette définition n'est pas fixe et nous sommes curieux de votre avis sur la question :)
 :::
 # Introduction
 ## Objectifs de la leçon
@@ -677,12 +693,519 @@ fig.update_layout(
     )]
 )
 
-fig.update_layout(width = 800,height = 600)
+fig.update_layout(width = 1000,height = 600)
 fig.write_image("./images/statique/fig_8.png")
 save_html(fig, "./images/interactif/fig_8.html")
 ```
 
-[![**Figure 8.** Graphes à points avec un filtre intéractif sous la forme d'un menu déroulant créé grâce à **Plotly Express**. Cette figure contient une légende intéractive qui per;et au lecteur d'isoler, comparer et retirer des données. De plus survoler des points permet de faire apparaître des boîtes flottantes.](images/statique/fig_8.png)](https://google.com)
+[![**Figure 8.** Nuage de points avec un filtre intéractif sous la forme d'un menu déroulant créé grâce à **Plotly Express**. Cette figure contient une légende intéractive qui permet au lecteur d'isoler, comparer et retirer des données. De plus survoler des points permet de faire apparaître des boîtes flottantes.](images/statique/fig_8.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+Créer ce menu déroulant dans l'exemple ci dessus permet aux utilisateur.ice.s d'isoler (et examiner) des éléments spécifiques à partir d'une visualisation plus générale. Nous avions découvert cette fonctionnalité de **Plotly** plus tôt en notant qu'un double clique sur une catégorie de la légende permettait de retirer tous les autres groupes de la figure. Cependant, le menu déroulant apporte d'autres avantages : il nous permet de créer des titres dynamiques qui peuvent changer en fonction de ce que nous avons selectionné.\\
+
+L'exemple ci-dessus montre qu'il est très facile de créer des visualisations avec **Plotly Express** et qu'il est relativement simple de rajouter de l'interactivité comme des animations ou des menus déroulants. Nous allons maintenant passer à la création de graphes avec **Plotly Graph Objects**. Plus précisément, nous allons nous concentrer sur ce que sont les **Graph Objects**, comment ils fonctionnent et quand (ou pourquoi) vous pourriez avoir envie de créer des graphes en utilisant **Plotly Graph Objects** plutôt qu'avec **Plotly Express**.
+
+# Création des graphes avec `Plotly Graph Objects`
+
+## Configuration de `Plotly Graph Objects`
+
+Pour commencer à travailler avec `Plotly Graph Objects`, vous aurez besoin d'importer le module `graph_objects` :
+```{python}
+import plotly.graph_objects as go 
+from plotly.graph_objs.scatter.marker import Line # Pas nécessaire mais évite de déclencher 'DeprecationWarning'.
+```
+
+> **Notons que dans un script `.py` conventionnel, les librairies devraient être importées au début du script. On importe ici les librairies pour un soucis de claireté.**
+
+::: {.NoteAuxEvaluateurices}
+Le constructeur `Line` n'est plus tellement utilisé. On aurait tendance à utiliser `go.Scatter(..., mode="markers+lines")`. C'est ce que j'ai fait pour la suite du tutoriel dans une volonté de mettre à jour les informations
+:::
+
+## Ce ne sont que des Objets ! La structure des données de `Plotly Graph Objects` 
+
+Comme mentionné en introduction de cette leçon, toutes les figures créées avec `Plotly Express` sont en fait des `Graph Objects` sous le capot. Cela signifie que, lorsque nous créons une figure avec `plotly.px`, vous êtes en fait en train de créer une instance de `Graph Object`.
+
+Cela devient évident si l'on utilise la fonction `type` avec la variable `fig` :
+```{python}
+# Résultat du type de la figure
+print(type(fig))
+``` 
+
+Il est alors important de toujours garder en tête que les figures créées avec `Plotly` sont des `Graph Objects`.
+
+Les `Graph Objects` sont représentés comme des structres de données en arbre (ie. hiérarchiques) avec trois racines :
+
+- la racine `data` — *données* — contient des infotmations comme le type de représentation, les catégories disponibles, les points associés à chaque catégorie, l'option d'affichage dans la légende, le type de marqueurs utilisés, les informations à afficher lorsque l'on survole les points.
+
+- la racine `layout` — *affichage* — contient des informations telles que les dimensions de la figure, les polices et couleurs d'écriture à utiliser, les annotations, les coordinnées des sous-figures (*subplots*), et si des images doivent être utilisées comme arrière plan.
+
+- la racine `frames` contient toutes les informations reliées aux animations utilisées dans la figure, comme les données à afficher à chaque *frame*. Cet attribut ne sera pas créé si vous n'ajoutez pas d'animation à la figure.
+
+Il est facile de voir la structure de données sous-jacente d'une figure en l'imprimant comme un dictionnaire avec la fonction `fig.to_dict()`. Pour lire ces données plus facilement, on peut utiliser le format `JSON` avec la fonction `fig.to_json(pretty = True)`. Dans l'exemple ci dessous, nous ne montrons que les 500 premiers caractères comme extrait de sortie après utilisation de cette fonction (une fois encore, en utilisant la variable `fig` créée précédemment).
+
+```{python}
+# print(fig.to_dict())
+print(fig.to_json(pretty = True)[0:500] + "\n...")
+```
+
+Examiner la sortie affichée devrait pouvoir vous aider à comprendre la structure de données sous-jacente et les propriétés d'un `Graph Object`. Si vous imprimez la sortie entière (en utilisant `fig.to_dict()`) vous noterez que : 
+
+- la structure de donnée contient des `data` pour chaque discipline (Géographie, Économie, Sociolgie et Études de genre) chaque discipline dispose de son propre dictionnaire.
+
+- l'attribut `data` qualifie quel type de graphe est utilisé (ici `Scatter`)
+
+- l'attribut `layout` contient le titre de la figure
+
+- l'attribut `layout` contient les données associées aux `buttons` (ie le menu déroulant).
+
+
+- Il n'y a pas d'attribut `frames` puisqu'il n'y a pas d'animation associées à la figure.
+
+::: {.NoteAuxEvaluateurices}
+Erreur dans l'article origninal
+:::
+
+## Utiliser `Plotly Graph Objects` **vs** `Plotly Express`
+
+Un autre point qu'il est important d'avoir à l'esprit c'est que créer des graphes avec `plotly.go` requiert, en général, bien plus de code qu'en créant un graphe identique avec `plotly.px`.
+
+Voyez plutôt l'exemple suivant : construisons un diagramme bâton horizontal pour montrer le nombre d'articles mentionnant le genre par catégorie. Premièrement, créons un DataFrame qui compte le nombre d'articles mentionnant le genre par discipline :
+
+```{python}
+articles_par_discipline_mention_genre : pd.Series = df.\
+    groupby(["discipline"], as_index = False).\
+    size()
+```
+
+Construisons maintenant le diagramme en barres horizontal avec ces données, grâce à `plotly.go` :
+```{python}
+#| echo: true
+#| eval: false
+
+fig = go.Figure(
+    go.Bar(
+        x = articles_par_discipline_mention_genre["size"], # On utilise go.Bar() pour spécifier le type de chart à utiliser
+        y = articles_par_discipline_mention_genre["discipline"],
+        orientation = "h",
+        hovertemplate = "Discipline : %{y}<br>Nombre d'articles : %{x}<extra></extra>"  # Nous devons formatter le "hover text" alors que c'est automatique avec plotly.px
+    ),
+    # layout = {"title" : "Ajouter le titre de votre choix"},
+)
+
+fig.update_layout(
+    # Il est nécessaire d'utiliser la fonction update_layout pour ajouter des titres d'axes alors que c'est automatique avec plotly.px
+    xaxis = {"title" : "Nombre d'articles"},
+    yaxis = {"title" : "Discipline"}
+)
+
+fig.show()
+```
+```{python}
+#| echo: false
+#| eval: true
+
+fig = go.Figure(
+    go.Bar(
+        x = articles_par_discipline_mention_genre["size"], # On utilise go.Bar() pour spécifier le type de chart à utiliser
+        y = articles_par_discipline_mention_genre["discipline"],
+        orientation = "h",
+        hovertemplate = "Discipline : %{y}<br>Nombre d'articles : %{x}<extra></extra>"  # Nous devons formatter le "hover text" alors que c'est automatique avec plotly.px
+    ),
+    # layout = {"title" : "Ajouter le titre de votre choix"},
+)
+
+fig.update_layout(
+    # Il est nécessaire d'utiliser la fonction update_layout pour ajouter des titres d'axes alors que c'est automatique avec plotly.px
+    xaxis = {"title" : "Nombre d'articles"},
+    yaxis = {"title" : "Discipline"}
+)
+
+fig.update_layout(width = 800,height = 600)
+fig.write_image("./images/statique/fig_9.png")
+save_html(fig, "./images/interactif/fig_9.html")
+```
+
+[![**Figure 9.** Diagramme en barres horizontal avec une intéractivité simple créé avec `Plotly Graph Objects`. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_9.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+Notons que lorsque l'on utilise `Plotly Object Graphs`, on peut fournir un titre en utilisant l'argument `layout`, qui prend un dictionnaire contenant la clef `title` et sa valeur.
+
+Mainteant créons le même graphe avec `plotly.px` :
+
+```{python}
+#| echo: true
+#| eval: false
+
+fig = px.bar(
+    articles_par_discipline_mention_genre,
+    x = "size", y = "discipline",
+    orientation = "h",
+    #title = "Titre de votre choix",
+    labels = {"size" : "Nombre d'articles"}
+)
+fig.show()
+```
+```{python}
+#| echo: false
+#| eval: true
+
+fig = px.bar(
+    articles_par_discipline_mention_genre,
+    x = "size", y = "discipline",
+    orientation = "h",
+    #title = "Titre de votre choix",
+    labels = {"size" : "Nombre d'articles"}
+)
+
+fig.update_layout(width = 800,height = 600)
+fig.write_image("./images/statique/fig_10.png")
+save_html(fig, "./images/interactif/fig_10.html")
+```
+
+[![**Figure 10.** Diagramme bâton horizontal avec une interactivité simple créé avec `Plotly Express`. Les lecteurices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_10.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+Il est clair d'après les exemples précédents que `plotly.go` recquiert plus de code que `plotly.px` car de nombreuses fonctionnalités nécessitent d'être manuellement créées dans `plotly.go`. Ainsi, il est en général recommendé d'utiliser `plotly.px` quand c'est possible.
+
+## Pourquoi utiliser `Graph Objects`
+
+Ceci devrait nous amener à la question centrale : si c'est si simple d'utiliser `plotly.px` pour créer des visualisations, pourquoi devrions nous nous embêter avec `plotly.go`? La réponse simple est qu'il y a en réalité de nombreuses fonctionalités utiles qui ne sont accessibles qu'à travers `plotly.go`. Nous jettons un oeil à deux de ces fonctionalités dans cette section du tutoriel : les tableaux et les compositions de figures (*subplots*).
+
+### Tableaux
+
+L'une des fonctionnalités de `plotly.go` la plus utile, est l'option de créer des tableaux intéractifs et propres.
+
+Pour cela, suivont les 4 étapes suivantes :
+
+1. Créer une figure avec la fonction `.Figure()`
+
+2. à la racine `data`, utiliser la fonction `.Table()` pour spécifier que la figure doit être une table.
+
+3. Dans la fonction `.Table()`, créer un dictionnaire entête (`header`) pour stocker la list des colonnes de l'entête
+
+4. Dans la fonction `.Table()`, ajouter un dictionnaire cellules (`cells`) pour y mettre les valeurs du tableau
+
+Il est aussi possible de customiser grâce à des labels, couleurs, et des options d'alignement
+
+Dans l'exemple ci dessous, nous créons un tableau pour stocker l'entièreté de la base de donnée de l'article.
+
+```{python}
+fig = go.Figure(
+    data = [
+        go.Table(
+            header = {
+                "values" : df.columns,
+                "fill_color" : "paleturquoise",
+                "align" : "left"
+            },
+            cells = {
+                "values" : df.transpose().values.tolist(),
+                "fill_color" : "lavender",
+                "align" : "left"
+            }
+        )
+    ]
+)
+
+fig.show()
+```
+```{python}
+fig = go.Figure(
+    data = [
+        go.Table(
+            header = {
+                "values" : df.columns,
+                "fill_color" : "paleturquoise",
+                "align" : "left"
+            },
+            cells = {
+                "values" : df.transpose().values.tolist(),
+                "fill_color" : "lavender",
+                "align" : "left"
+            }
+        )
+    ]
+)
+
+fig.update_layout(width = 800,height = 600)
+fig.write_image("./images/statique/fig_11.png")
+save_html(fig, "./images/interactif/fig_11.html")
+```
+
+[![**Figure 11.** Tableau contenant les données de nos articles et créé avec `Plotly Graph Object`. Les Lecteur.ices peuvent dérouller toutes les entrées du jeu de donnée comme iels le feraient dans un tableur.](images/statique/fig_11.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+De la même manière qu'avec `plotly.px`, les figures de `plotly.go` permettent une certaine intéractivté native. Les tableaux par exemple permettent aux utilisateur.ices de faire défiler les lignes du tableau (en utilisant le trackpad ou la bar de défilement sur la droite). Ces objets sont ainsi excellents pour économiser de la place. Il est aussi facile de déplacer des colonnes en cliquant sur l'entête d'une colonne et la déplaçant à droite ou à gauche. 
+
+### La compositions de figures (*subplots*)
+
+Une autre fonctionnalité très utile de `plotly.go` est le fait de pouvoir créer des compositions de figures. Bien que `plotly.px` permette de créer des visualisations en mosaïque, le champ des possibles est relativement limité puisque les sous-figures générées doivent toutes partager le même type de représentation, les axes et les variables à afficher. La composition de figures permet elle de créer des grilles contenant différents types de représentations avec leurs axes et variables propres afin de transformer les figures en des objets proches des *dashboard*.
+
+Puisque le code est particulièrement long pour créer des compositions de figures, cet exemple sera présenté pas à pas. Nous créérons une grille de 3x1 contenant 3 différents graphes : le premier sera un diagramme en barres standard pour quantifier le nombre d'articles mentionnant le genre à travers les disciplines; le deuxième sera une courbe affichant l'évolution de la part des articles mentionnaient le genre à travers les années. Enfin le dernier graphe sera un diagramme en boîte (avec la représentation du minimum, maximum, interquartile d'une distribution) sur la distribution de la part d'auteurices dans les articles en fonction de si l'article est écrit en écriture inclusive ou non.
+#### Étape 1 : importer le module subplots et préparer les données
+
+```{python}
+# Importer make_subplots
+from plotly.subplots import make_subplots
+
+# Préparation des données
+articles_par_discipline_mention_genre = df.\
+    loc[df["genre"] == 1, :].\
+    groupby("discipline", as_index = False).\
+    size()
+
+proportion_d_articles_mentionnant_le_genre_par_annee = df.\
+    loc[:,["discipline", "annee_publication", "genre"]].\
+    groupby(["discipline", "annee_publication"], as_index = False).\
+    mean()
+
+pourcentage_d_auteurice_femme_si_inclusif = df.\
+    groupby("genre")
+```
+
+#### Étape 2 : Création d'une composition de sousfigures vide avec une grille 3x1 grâce à la fonction `make_subplots`
+
+```{python}
+# 1 ligne, 3 colonnes
+fig = make_subplots(rows = 1, cols = 3)
+```
+
+#### Étape 3 création du premier graphe (le diagramme bâton) grace à la fonction `.add_trace()`
+
+```{python}
+#| echo: true
+#| eval: false
+
+fig.add_trace(
+    # la fonction go.Bar permet de spécifier le type de graphe à créer
+    go.Bar(
+        x = articles_par_discipline_mention_genre["size"],
+        y = articles_par_discipline_mention_genre["discipline"],
+        orientation = "h",
+        name = "Nombre d'articles publiés mentionnant le genre par discipline",
+        hovertemplate = "<b>Discipline :</b> %{y}<br><b>Nombre d'articles publiés</b> : %{x}<extra></extra>"
+    ),
+    row = 1, col = 1 # Les paramètres row et col permettent de positionner le graphe dans la bonne case
+)
+```
+```{python}
+#| echo: false
+#| eval: true
+
+fig.add_trace(
+    # la fonction go.Bar permet de spécifier le type de graphe à créer
+    go.Bar(
+        x = articles_par_discipline_mention_genre["size"],
+        y = articles_par_discipline_mention_genre["discipline"],
+        orientation = "h",
+        name = "Nombre d'articles publiés mentionnant le genre par discipline",
+        hovertemplate = "<b>Discipline :</b> %{y}<br><b>Nombre d'articles publiés</b> : %{x}<extra></extra>"
+    ),
+    row = 1, col = 1 # Les paramètres row et col permettent de positionner le graphe dans la bonne case
+)
+
+fig.update_layout(width = 1200,height = 400)
+fig.write_image("./images/statique/fig_12.png")
+save_html(fig, "./images/interactif/fig_12.html")
+```
+
+[![**Figure 12.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, et deux colonnes vides sur la droite. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes](images/statique/fig_12.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+> **Nota : si vous créez une composition de figure dans un Notebook Jupyter, relancer le code pourrait dupliquer la trace que vous venez d'ajouter et donc doubler la légende. Si vous avez besoin de relancer le code, il vaudrait mieux redémarrer le kernel d'abord.**
+
+:::{.NoteAuxEvaluateurices}
+En vrai c'est pas nécessaire, il suffit de relancer la cellule où on définit la variable `fig`. Est ce qu'on veut corriger ? 
+:::
+
+> **Nota : si vous créez une composition de figure dans un Notebook Jupyter, relancer le code pourrait dupliquer la trace que vous venez d'ajouter et donc doubler la légende. Si vous avez besoin de relancer le code, il vaudrait mieux relancer à partir de la cellule qui définit la variable `fig` que vous modifiez.**
+
+#### Étape 4 : Ajouter le second graphe (courbe)
+
+```{python}
+#| echo: true
+#| eval: False
+
+# Pour chaque discipline il faut créer un objet go.Line différent afin de créer les différentes courbes. 
+# Pour se faire, on divise notre dataframe par discipline et on procède comme précédemment en ne travaillant qu'avec les sous-dataset
+for discipline, df_discipline in proportion_d_articles_mentionnant_le_genre_par_annee.groupby("discipline") :
+    fig.add_trace(
+        # la fonction go.Scatter permet de spécifier le type de graphe à créer
+        go.Scatter(
+            x = df_discipline["annee_publication"],
+            y = df_discipline["genre"],
+            name = discipline,
+            mode = "markers+lines",
+            hovertemplate = (f"<b>Discipline :</b> {discipline}"
+                             "<br><b>Année :</b> %{x}<br><b>Propotion des particles :</b> %{y}")  
+
+        ),
+        
+        row = 1, col = 2 # Les paramètres row et col permettent de positionner le graphe dans la bonne case
+    )
+```
+
+```{python}
+#| echo: false
+#| eval: true
+
+# Pour chaque discipline il faut créer un objet go.Line différent afin de créer les différentes courbes. 
+# Pour se faire, on divise notre dataframe par discipline et on procède comme précédemment en ne travaillant qu'avec les sous-dataset
+for discipline, df_discipline in proportion_d_articles_mentionnant_le_genre_par_annee.groupby("discipline") :
+    fig.add_trace(
+        # la fonction go.Scatter permet de spécifier le type de graphe à créer
+        go.Scatter(
+            x = df_discipline["annee_publication"],
+            y = df_discipline["genre"],
+            name = discipline,
+            mode = "markers+lines",
+            hovertemplate = (f"<b>Discipline :</b> {discipline}"
+                             "<br><b>Année :</b> %{x}<br><b>Propotion des particles :</b> %{y}")  
+
+        ),
+        
+        row = 1, col = 2 # Les paramètres row et col permettent de positionner le graphe dans la bonne case
+    )
+
+fig.update_layout(width = 1200,height = 400)
+fig.write_image("./images/statique/fig_13.png")
+save_html(fig, "./images/interactif/fig_13.html")
+```
+
+[![**Figure 13.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et une colonnes vide sur la droite. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_13.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+#### Étape 5 : Ajouter le dernier graphe (diagramme en boîte)
+
+Nous n'avons pas encore exploré les diagrammes en boîte (*boxplot*), mais ils sont créés de la même manière que les autres graphes et ont une intéractivité native similaire (survoler une boîte nous montrera la valeur minimum, maximum, médiane, et les interquartiles des données affichées).
+
+```{python}
+#| echo: true
+#| eval: false
+
+fig.add_trace(
+    # On utilise la fonction go.Box() pour spécifier qu'on créé un graphe de boîtes à moustache
+    go.Box(
+        y = pourcentage_d_auteurice_femme_si_inclusif.\
+            get_group(True)["pourcentage_femme"],
+        name = "Genre"),
+        row = 1, col = 3 # puisque c'est le 3è graphe, on le met sur la 3è colonne
+)
+
+# On ajoute la deuxième boîte à moustage puisqu'on a 2 groupes distincts pour les articles avec et sans écriture inclusive
+fig.add_trace(
+    go.Box(
+        y = pourcentage_d_auteurice_femme_si_inclusif.\
+            get_group(False)["pourcentage_femme"],
+        name = "Pas genre"),
+    row = 1, col = 3 
+)
+```
+
+```{python}
+#| echo: false
+#| eval: true
+
+fig.add_trace(
+    # On utilise la fonction go.Box() pour spécifier qu'on créé un graphe de boîtes à moustache
+    go.Box(
+        y = pourcentage_d_auteurice_femme_si_inclusif.\
+            get_group(True)["pourcentage_femme"],
+        name = "Genre"),
+        row = 1, col = 3 # puisque c'est le 3è graphe, on le met sur la 3è colonne
+)
+
+# On ajoute la deuxième boîte à moustage puisqu'on a 2 groupes distincts pour les articles avec et sans écriture inclusive
+fig.add_trace(
+    go.Box(
+        y = pourcentage_d_auteurice_femme_si_inclusif.\
+            get_group(False)["pourcentage_femme"],
+        name = "Pas genre"),
+    row = 1, col = 3 
+)
+
+fig.update_layout(width = 1200,height = 400)
+fig.write_image("./images/statique/fig_14.png")
+save_html(fig, "./images/interactif/fig_14.html")
+```
+
+[![**Figure 14.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux boîtes à moustaches représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_14.png)](https://google.com)
+
+::: {.TODO}
+Link to real https
+:::
+
+#### Étape 6 : formattage de la Figure
+
+Il est nécessaire d'ajuster certains paramètres, comme ajouter un titre général à la figure et des sous-titres pour tous les sous-graphes. Vous pourriez aussi vouloir changer la police d'écriture, changer la position du texte, la taille de la figure -- vous pouvez utiliser la fonction `.update_layout()` pour changer toutes ces propriétés :
+
+::: {.NoteAuxEvaluateurices}
+ce passage est bizarre et je pense que c'est parce que l'auteur voulait utiliser qqch du genre `fig.layout = ...` (utiliser par littéralement personne) et qui explique les inconsistences dans la conclusion. Perso je ferais fi de ce commentaire.
+:::
+
+```{python}
+#| echo: true
+#| eval: false
+
+fig.update_layout(
+    font_family = "Times New Roman", # Changement de la police d'écriture pour toute la figure
+    hoverlabel_font_family = "Times New Roman", # Changement de la police d'écriture pour les notes hover
+    hoverlabel_font_size = 16, # changement de la taille d'écriture pour les notes hover
+    # title_text = "Ajouter un titre ici", # Titre principal
+    # title_x = 0.5 # Positionnement du titre principal au centre du graphe (note : le paramètre title_x ne prend que des entiers (integers) ou des réels (floats))
+    xaxis1_title_text = "Nombre d'articles mentionnant le genre", # ajout d'un titre d'axe pour l'absisse du premier graphe
+    yaxis1_title_text = "Catégorie du journal", # ajout d'un titre d'axe pour les ordonnées du premier graphe
+    yaxis2_title_text = "Part des articles mentionnant le genre",
+    xaxis2_title_text = "Année de publication",
+    yaxis3_title_text = "Distribution du pourcentage de femmes autrice de chaque article",
+    showlegend = False, # Retire la légende
+    height = 650 # Ajuste la taille du graphe  - pas toujours nécessaire mais peut s'avérer utilse si les figures sont publiées sur internet
+)
+``` 
+
+```{python}
+#| echo: false
+#| eval: true
+
+fig.update_layout(
+    font_family = "Times New Roman", # Changement de la police d'écriture pour toute la figure
+    hoverlabel_font_family = "Times New Roman", # Changement de la police d'écriture pour les notes hover
+    hoverlabel_font_size = 16, # changement de la taille d'écriture pour les notes hover
+    # title_text = "Ajouter un titre ici", # Titre principal
+    # title_x = 0.5 # Positionnement du titre principal au centre du graphe (note : le paramètre title_x ne prend que des entiers (integers) ou des réels (floats))
+    xaxis1_title_text = "Nombre d'articles mentionnant le genre", # ajout d'un titre d'axe pour l'absisse du premier graphe
+    yaxis1_title_text = "Catégorie du journal", # ajout d'un titre d'axe pour les ordonnées du premier graphe
+    yaxis2_title_text = "Part des articles mentionnant le genre",
+    xaxis2_title_text = "Année de publication",
+    yaxis3_title_text = "Distribution du pourcentage de femmes autrice de chaque article",
+    showlegend = False, # Retire la légende
+    height = 650 # Ajuste la taille du graphe  - pas toujours nécessaire mais peut s'avérer utilse si les figures sont publiées sur internet
+)
+
+fig.update_layout(width = 1200,height = 400)
+fig.write_image("./images/statique/fig_15.png")
+save_html(fig, "./images/interactif/fig_15.html")
+```
+
+[![**Figure 15.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 14 avec une personalisation avancée.](images/statique/fig_15.png)](https://google.com)
 
 ::: {.TODO}
 Link to real https
