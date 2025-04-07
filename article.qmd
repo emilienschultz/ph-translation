@@ -80,6 +80,13 @@ import numpy as numpy
 import pandas as pd
 import plotly.express as px
 ```
+```{python}
+#| eval: true
+#| echo: false
+
+# Importing for saving the html files
+from images.interactif.save import save_html
+```
 
 ## Importer et nettoyer les Données
 
@@ -159,13 +166,14 @@ fig.show()
 #| eval: true
 #| echo: false
 
+# Cell to properly save and display the graph
 fig = px.bar(articles_par_discipline, x = "discipline", y = "size")
 fig.update_layout(
     width = 800,
     height = 600
 )
 fig.write_image("./images/statique/fig_1.png")
-fig.write_html("./images/interactif/fig_1.html", full_html = True, include_plotlyjs = True)
+save_html(fig, "./images/interactif/fig_1.html")
 ```
 
 ![**Figure 1.** Un diagramme en barres avec une intéractivité simple en utilisant **Plotly Express**. Si les lecteur.ice.s survolent les barres, on peut y voir apparaître des boîtes flottantes.](images/statique/fig_1.png)

@@ -161,7 +161,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Maintenant que ces packages sont installés, créez un nouveau Jupyter notebook (ou un nouveau fichier python dans votre IDE). Idéalement, placez votre jeu de donnée et votre fichier python / notebook dans le même dossier.</li>
 <li>Importez les modules à l’aide de la commande <code>import</code> au début de votre fichier :</li>
 </ol>
-<div id="e220934c" class="cell" data-execution_count="1">
+<div id="8f8a3327" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> numpy</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -175,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Remplacer les données numériques qui pourraient manquer par des <code>np.nan</code> (objet Numpy <em>Not a Number</em>)</p></li>
 <li><p>Renommer et retirer certaines données pour plus de claireté et de précision</p></li>
 </ul>
-<div id="075f290a" class="cell" data-execution_count="2">
+<div id="c597e86a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>colonnes : <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"annee_publication"</span>, <span class="st">"revue"</span>, <span class="st">"pourcentage_femme"</span>, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"inclusif"</span>, <span class="st">"genre"</span>, <span class="st">"classe"</span>, <span class="st">"discipline"</span></span>
@@ -221,13 +221,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="diagrammes-en-barres" class="level2">
 <h2 class="anchored" data-anchor-id="diagrammes-en-barres">Diagrammes en barres</h2>
 <p>Maintenant que nous avons créé un dataframe pandas de notre jeu de donnée, nous pouvons commencer à créer quelques graphes simples en utilisant <strong>Plotly Express</strong>. Commençons par créer un diagramme en barres pour représenter le nombre d’articles publiés dans chaque discipline. Puisque notre jeu de données ne contient pas le nombre d’article (pour le moment, chaque ligne correspond à un article) nous allons d’abord créer un nouveau <code>DataFrame</code> qui regroupera les articles écrits pour chaque discipline puis évaluer le nombre d’entrées dans chaque tableau.</p>
-<div id="1e0e1126" class="cell" data-execution_count="3">
+<div id="ca6c5277" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Création d'un nouveau dataframe</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>articles_par_discipline : pd.Series <span class="op">=</span> df.<span class="op">\</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                groupby([<span class="st">"discipline"</span>], as_index <span class="op">=</span> <span class="va">False</span>).<span class="op">\</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                                size()</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>articles_par_discipline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 
 
@@ -267,7 +267,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>il suffit alors de créer un histogramme en utilisant ce nouveau <code>DataFrame</code>. remarquons que ce graphe est sauvegardé sous la variable <code>fig</code>, qui est une convention lorsqu’on travaille avec plotly :</p>
-<div id="15556aae" class="cell" data-execution_count="4">
+<div id="74a7b240" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Créé le diagramme bâton (bar chart) en utilisant la fonction .bar()</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.bar(articles_par_discipline, x <span class="op">=</span> <span class="st">"discipline"</span>, y <span class="op">=</span> <span class="st">"size"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
