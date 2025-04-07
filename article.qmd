@@ -194,11 +194,8 @@ fig.write_image("./images/statique/fig_1.png")
 save_html(fig, "./images/interactif/fig_1.html")
 ```
 
-[![**Figure 1.** Un diagramme en barres avec une intéractivité simple en utilisant **Plotly Express**. Si les lecteur.ice.s survolent les barres, on peut y voir apparaître des boîtes flottantes.](images/statique/fig_1.png)](https://google.com)
+[![**Figure 1.** Un diagramme en barres avec une intéractivité simple en utilisant **Plotly Express**. Si les lecteur.ice.s survolent les barres, on peut y voir apparaître des boîtes flottantes.](images/statique/fig_1.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_1.html)
 
-::: {.TODO}
-Link to real https
-:::
 Vous venez de créer votre première visualisation! Remarquons que cette visualisation est déjà en partie interactive : en passant la souris sur chaque barre, la figure nous spécifie combien d'articles sont représentés et la discipline des articles. Une autre fonctionnalité notable est que l'utilisateur.ice peut sauvegarder la visualisation comme un `.png` (comme image statique) cliquant sur l'icône *appareil photo* qui apparaît lorsque la souris se trouve dans le coin haut droit de l'image. Au même endroit on peut trouver des fonctions de zoom, defilement, changement d'échelle et réinitialiser la vue. Toutes ces fonctionnalités seront disponible pour toutes les visualisations qui suivent.
 
 En revanche, la visualisation n'est pas des plus sympathiques, il manque de couleurs, d'un titre et de titres d'axes plus visibles. Il est possible de préciser ces informations dès le début, en donnant plus d'arguments à la fonction `.bar()`. Par exemple, grâce à l'argument `labels` nous pouvons changer le nom des axes et grâce à l'argument `color` on peut changer la couleur des barres selon une variable de notre jeu de donnée (ici nous utiliserons "Nombres d'articles" pour l'axe vertical). Pour ajouter un titre, il suffit d'utiliser l'argument `title`.
@@ -240,11 +237,7 @@ fig.update_layout(width = 800,height = 600)
 fig.write_image("./images/statique/fig_2.png")
 save_html(fig, "./images/interactif/fig_2.html")
 ```
-[![**Figure 2.** Un diagramme bâton avec une intéractivité simple en utilisant **Plotly Express**. Cette visualisation est une variante de la **Figure 1** avec cette fois ci des couleurs et une légende interactive qui permet aux lecteur.ice.s d'isoler ou bien de retirer des données.](images/statique/fig_2.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 2.** Un diagramme bâton avec une intéractivité simple en utilisant **Plotly Express**. Cette visualisation est une variante de la **Figure 1** avec cette fois ci des couleurs et une légende interactive qui permet aux lecteur.ice.s d'isoler ou bien de retirer des données.](images/statique/fig_2.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_2.html)
 
 Comme montré ci dessus, **Plotly** ajoute automatiquement une légende à la visualisation si vous distinguez les objets par des couleurs (à savoir que la légende peut être retirée). La légende est elle aussi interactive : en cliquant une fois sur un élément, la barre correspondante disparait de la visualisation; en double-cliquant sur un élément, cette fois ci tous les autres objets disparaissent excepté celui que vous avez sélectionné.
 
@@ -295,11 +288,7 @@ fig.write_image("./images/statique/fig_3.png")
 save_html(fig, "./images/interactif/fig_3.html")
 ```
 
-[![**Figure 3.** Courbe avec une intéractivité simple en utilisant **Plotly Express**. Survoler les lignes révèle ne boîte flottante.](images/statique/fig_3.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 3.** Courbe avec une intéractivité simple en utilisant **Plotly Express**. Survoler les lignes révèle ne boîte flottante.](images/statique/fig_3.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_3.html)
 
 Nous avons appris à créer de nouvelles visualisations et de les personnaliser - mais comment faire pour personnaliser notre figure après l'avoir créer ? À la place nous pouvons utiliser la fonction `.update_layout()` sur notre `fig` pour éditer après coup. Cette fonction peut être appliquée à n'importe quelle figure générée avec **Plotly Express** afin de modifier un large panel de paramètres. Prenons comme exemple la fonction générée précédemment et modifions la police, la couleur et la taille de notre titre : 
 
@@ -329,11 +318,7 @@ fig.update_layout(width = 800,height = 600)
 fig.write_image("./images/statique/fig_4.png")
 save_html(fig, "./images/interactif/fig_4.html")
 ```
-[![**Figure 4.** Courbe avec une intéractivité simple en utilisant Plotly Express. Survoler les lignes révèle ne boîte flottante. Cette visualisation est une variante de la Figure 3 avec des polices d'écriture, couleurs et titre différent.](images/statique/fig_4.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 4.** Courbe avec une intéractivité simple en utilisant Plotly Express. Survoler les lignes révèle ne boîte flottante. Cette visualisation est une variante de la Figure 3 avec des polices d'écriture, couleurs et titre différent.](images/statique/fig_4.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_4.html)
 
 ## Nuages de points
 
@@ -375,11 +360,7 @@ fig.update_layout(width = 800,height = 600)
 fig.write_image("./images/statique/fig_5.png")
 save_html(fig, "./images/interactif/fig_5.html")
 ```
-[![**Figure 5.** Nuage de points avec une intéractivité simple. Survoler un point du jeu de donnée permet d'afficher la discipline ainsi que la proportion d'articles mentionnant le genre, puis la classe pour une revue (non affichée) donnée. De plus, la légende intéractive permet d'isoler, comparer, retirer des catégories de points.](images/statique/fig_5.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 5.** Nuage de points avec une intéractivité simple. Survoler un point du jeu de donnée permet d'afficher la discipline ainsi que la proportion d'articles mentionnant le genre, puis la classe pour une revue (non affichée) donnée. De plus, la légende intéractive permet d'isoler, comparer, retirer des catégories de points.](images/statique/fig_5.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_5.html)
 
 Comme vous pouvez le voir, les nuages de points contiennent aussi certaines intéractions par défaut : survoler les points permet d'afficher les données spécifique de proportions d'articles mentionnant le genre ou la classe. Cliquer ou double cliquer sur le nom des disciplines dans la légende permet d'isoler certains éléments.
 
@@ -426,11 +407,7 @@ fig.write_image("./images/statique/fig_6.png")
 save_html(fig, "./images/interactif/fig_6.html")
 ```
 
-[![**Figure 6.** Une mosaïque de 2 diagrammes en barres avec une intéractivité simple créée avec **Plotly Express** en distinguant les articles écrits par une majorité de femmes et ceux écrits par une majorité d'hommes. La légende intéractive permet aussi d'isoler, comparer ou retirer certaines disciplines.](images/statique/fig_6.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 6.** Une mosaïque de 2 diagrammes en barres avec une intéractivité simple créée avec **Plotly Express** en distinguant les articles écrits par une majorité de femmes et ceux écrits par une majorité d'hommes. La légende intéractive permet aussi d'isoler, comparer ou retirer certaines disciplines.](images/statique/fig_6.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_6.html)
 
 Notez que cette méthode ne nécessite pas de spécifier les dimensions de la grille puisque **Plotly Express** divise automatiquement la figure par le nombre de catégories disponibles (ici 2 puisque les 2 catégories disponibles sont majorité masculine / féminine). Cependant cette méthode ne peut fonctionner uniquement pour des figures ne représentant qu'un seul type de représentation (ici diagrammes en barres). Nous discutons plus bas de la manière des figures contenant des sous figures de dimensions particlulières en utilisant **Graph Objects**.
 
@@ -481,11 +458,8 @@ fig.write_image("./images/statique/fig_7.png")
 save_html(fig, "./images/interactif/fig_7.html")
 ```
 
-[![**Figure 7.** Diagramme bâton animé associé à une barre de défilement créés grâce à **Plotly Express**. Comme précédemment, les lecteur.ice.s peuvent survoler les barres pour faire apparaître des boîtes flottantes. Les lecteur.ice.s peuvent appuyer sur les boutons *play/pause* ou utiliser la barre de défilement pour naviguer à travers les années.](images/statique/fig_7.png)](https://google.com)
+[![**Figure 7.** Diagramme bâton animé associé à une barre de défilement créés grâce à **Plotly Express**. Comme précédemment, les lecteur.ice.s peuvent survoler les barres pour faire apparaître des boîtes flottantes. Les lecteur.ice.s peuvent appuyer sur les boutons *play/pause* ou utiliser la barre de défilement pour naviguer à travers les années.](images/statique/fig_7.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_7.html)
 
-::: {.TODO}
-Link to real https
-:::
 
 ## Ajouter des animations : Menus déroulants
 
@@ -698,11 +672,7 @@ fig.write_image("./images/statique/fig_8.png")
 save_html(fig, "./images/interactif/fig_8.html")
 ```
 
-[![**Figure 8.** Nuage de points avec un filtre intéractif sous la forme d'un menu déroulant créé grâce à **Plotly Express**. Cette figure contient une légende intéractive qui permet au lecteur d'isoler, comparer et retirer des données. De plus survoler des points permet de faire apparaître des boîtes flottantes.](images/statique/fig_8.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 8.** Nuage de points avec un filtre intéractif sous la forme d'un menu déroulant créé grâce à **Plotly Express**. Cette figure contient une légende intéractive qui permet au lecteur d'isoler, comparer et retirer des données. De plus survoler des points permet de faire apparaître des boîtes flottantes.](images/statique/fig_8.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_8.html)
 
 Créer ce menu déroulant dans l'exemple ci dessus permet aux utilisateur.ice.s d'isoler (et examiner) des éléments spécifiques à partir d'une visualisation plus générale. Nous avions découvert cette fonctionnalité de **Plotly** plus tôt en notant qu'un double clique sur une catégorie de la légende permettait de retirer tous les autres groupes de la figure. Cependant, le menu déroulant apporte d'autres avantages : il nous permet de créer des titres dynamiques qui peuvent changer en fonction de ce que nous avons selectionné.\\
 
@@ -828,11 +798,7 @@ fig.write_image("./images/statique/fig_9.png")
 save_html(fig, "./images/interactif/fig_9.html")
 ```
 
-[![**Figure 9.** Diagramme en barres horizontal avec une intéractivité simple créé avec `Plotly Graph Objects`. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_9.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 9.** Diagramme en barres horizontal avec une intéractivité simple créé avec `Plotly Graph Objects`. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_9.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_9.html)
 
 Notons que lorsque l'on utilise `Plotly Object Graphs`, on peut fournir un titre en utilisant l'argument `layout`, qui prend un dictionnaire contenant la clef `title` et sa valeur.
 
@@ -868,11 +834,7 @@ fig.write_image("./images/statique/fig_10.png")
 save_html(fig, "./images/interactif/fig_10.html")
 ```
 
-[![**Figure 10.** Diagramme bâton horizontal avec une interactivité simple créé avec `Plotly Express`. Les lecteurices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_10.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 10.** Diagramme bâton horizontal avec une interactivité simple créé avec `Plotly Express`. Les lecteurices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_10.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_10.html)
 
 Il est clair d'après les exemples précédents que `plotly.go` recquiert plus de code que `plotly.px` car de nombreuses fonctionnalités nécessitent d'être manuellement créées dans `plotly.go`. Ainsi, il est en général recommendé d'utiliser `plotly.px` quand c'est possible.
 
@@ -941,11 +903,7 @@ fig.write_image("./images/statique/fig_11.png")
 save_html(fig, "./images/interactif/fig_11.html")
 ```
 
-[![**Figure 11.** Tableau contenant les données de nos articles et créé avec `Plotly Graph Object`. Les Lecteur.ices peuvent dérouller toutes les entrées du jeu de donnée comme iels le feraient dans un tableur.](images/statique/fig_11.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 11.** Tableau contenant les données de nos articles et créé avec `Plotly Graph Object`. Les Lecteur.ices peuvent dérouller toutes les entrées du jeu de donnée comme iels le feraient dans un tableur.](images/statique/fig_11.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_11.html)
 
 De la même manière qu'avec `plotly.px`, les figures de `plotly.go` permettent une certaine intéractivté native. Les tableaux par exemple permettent aux utilisateur.ices de faire défiler les lignes du tableau (en utilisant le trackpad ou la bar de défilement sur la droite). Ces objets sont ainsi excellents pour économiser de la place. Il est aussi facile de déplacer des colonnes en cliquant sur l'entête d'une colonne et la déplaçant à droite ou à gauche. 
 
@@ -1021,11 +979,7 @@ fig.write_image("./images/statique/fig_12.png")
 save_html(fig, "./images/interactif/fig_12.html")
 ```
 
-[![**Figure 12.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, et deux colonnes vides sur la droite. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes](images/statique/fig_12.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 12.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, et deux colonnes vides sur la droite. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes](images/statique/fig_12.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_12.html)
 
 > **Nota : si vous créez une composition de figure dans un Notebook Jupyter, relancer le code pourrait dupliquer la trace que vous venez d'ajouter et donc doubler la légende. Si vous avez besoin de relancer le code, il vaudrait mieux redémarrer le kernel d'abord.**
 
@@ -1087,11 +1041,7 @@ fig.write_image("./images/statique/fig_13.png")
 save_html(fig, "./images/interactif/fig_13.html")
 ```
 
-[![**Figure 13.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et une colonnes vide sur la droite. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_13.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 13.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et une colonnes vide sur la droite. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_13.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_13.html)
 
 #### Étape 5 : Ajouter le dernier graphe (diagramme en boîte)
 
@@ -1147,11 +1097,7 @@ fig.write_image("./images/statique/fig_14.png")
 save_html(fig, "./images/interactif/fig_14.html")
 ```
 
-[![**Figure 14.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux boîtes à moustaches représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_14.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 14.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux boîtes à moustaches représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Les lecteur.ices peuvent survoler les barres pour faire apparaître les boîtes flottantes.](images/statique/fig_14.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_14.html)
 
 #### Étape 6 : formattage de la Figure
 
@@ -1205,12 +1151,7 @@ fig.write_image("./images/statique/fig_15.png")
 save_html(fig, "./images/interactif/fig_15.html")
 ```
 
-[![**Figure 15.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 14 avec une personalisation avancée.](images/statique/fig_15.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
-
+[![**Figure 15.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 14 avec une personalisation avancée.](images/statique/fig_15.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_15.html)
 #### Étape 7 : Ajout d'annotations aux courbes
 
 Puisque la légende à été retirée, il est impossible de sitinguer une discipline des autres. Nous pouvons utiliser la fonction `.update_layout` pour ajouter des flèches pointant vers chaque ligne avec une annotation : 
@@ -1301,11 +1242,7 @@ fig.write_image("./images/statique/fig_16.png")
 save_html(fig, "./images/interactif/fig_16.html")
 ```
 
-[![**Figure 16.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 15 des annotations pour repérer les courbes du sous-graphe du milieu](images/statique/fig_16.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 16.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 15 des annotations pour repérer les courbes du sous-graphe du milieu](images/statique/fig_16.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_16.html)
 
 ### Étape 8 : Ajout d'annotations en dessous de la figure 
 
@@ -1359,11 +1296,7 @@ fig.write_image("./images/statique/fig_17.png")
 save_html(fig, "./images/interactif/fig_17.html")
 ```
 
-[![**Figure 17.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 16 avec des annotations supplémentaires sous les graphes.](images/statique/fig_17.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 17.** Une composition de figures avec 3 colonnes et une intéractivité simple créée avec le module `Plotly Graph Object`, et avec un diagramme en barres sur la gauche montrant le nombre d'articles mentionnant le genre par discipline, une courbe au centre montrant l'évolution de la proportion d'articles mentionnant le genre par discipline et deux diagrammes en boîte représentant la distribution de la part d'autrices dans les articles selon s'il est publié en écriture inclusive ou non. Ce graphe est une variante de la figure 16 avec des annotations supplémentaires sous les graphes.](images/statique/fig_17.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_17.html)
 
 # Visualiser et Exporter les graphes
 
@@ -1400,11 +1333,7 @@ fig.write_image("./images/statique/fig_18.png")
 save_html(fig, "./images/interactif/fig_18.html")
 ```
 
-[![**Figure 18.** Reproduction de la figure 3, illustrant la fonction `fig.show()`.](images/statique/fig_18.png)](https://google.com)
-
-::: {.TODO}
-Link to real https
-:::
+[![**Figure 18.** Reproduction de la figure 3, illustrant la fonction `fig.show()`.](images/statique/fig_18.png)](https://axlmrin.github.io/ph-translation/images/interactif/fig_18.html)
 
 ## Export des graphes
 
